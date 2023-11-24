@@ -6,10 +6,13 @@ import argparse
 import logging
 import wandb
 import mlflow
+import os
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
+import cloudpickle
+#print("CLOUDPICKLE VERSION: ", cloudpickle.__version__)
 
-from wandb_utils.log_artifact import log_artifact
+#from wandb_utils.log_artifact import log_artifact
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
@@ -24,7 +27,14 @@ def go(args):
     logger.info("Downloading artifacts")
     # Download input artifact. This will also log that this script is using this
     # particular version of the artifact
-    model_local_path = run.use_artifact(args.mlflow_model).download()
+    try:
+        model_local_path = run.use_artifact(args.mlflow_model).download()
+        logger.info("model load succeeded")
+    except:
+        logger.info("model load failed")
+        
+    logger.info(f"Model local path: {model_local_path}")
+    logger.info(f"Downloaded model directory contents: {os.listdir(model_local_path)}")
 
     # Download test dataset
     test_dataset_path = run.use_artifact(args.test_dataset).file()
@@ -51,6 +61,8 @@ def go(args):
 
 
 if __name__ == "__main__":
+    #print("********HELLLLOOOOOO********")
+    #logger.info("********HELLLLOOOOOO********")
 
     parser = argparse.ArgumentParser(description="Test the provided model against the test dataset")
 
