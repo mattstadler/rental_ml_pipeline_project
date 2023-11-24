@@ -123,7 +123,7 @@ def go(args):
     )
 
     # Add the model directory to the artifact
-    model_artifact.add_dir("random_forest_dir")
+    model_artifact.add_dir(unique_model_dir)
 
     # Log the artifact to the run
     run.log_artifact(model_artifact)
